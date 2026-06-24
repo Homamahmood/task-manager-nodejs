@@ -34,8 +34,12 @@ app.post("/tasks", (req, res) => {
         });
     }
 
-   const newTask = {
-    id: tasks.length + 1,
+const nextId = tasks.length === 0
+    ? 1
+    : Math.max(...tasks.map((task) => task.id)) + 1;
+
+const newTask = {
+    id: nextId,
     title: title.trim(),
     completed: false
 };
