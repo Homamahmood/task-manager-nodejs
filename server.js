@@ -2,6 +2,8 @@ const express = require("express");
 
 const app = express();
 
+app.use(express.json());
+
 const tasks = [
     {
         id: 1,
@@ -19,6 +21,21 @@ app.get("/", (req, res) => {
 
 app.get("/tasks", (req, res) => {
     res.json(tasks);
+});
+
+app.post("/tasks", (req, res) => {
+
+    const newTask = {
+        id: tasks.length + 1,
+        title: req.body.title
+    };
+
+    tasks.push(newTask);
+
+    res.json({
+        message: "Task added successfully",
+        task: newTask
+    });
 });
 
 app.listen(3000, () => {
