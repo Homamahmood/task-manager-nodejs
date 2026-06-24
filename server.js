@@ -38,6 +38,21 @@ app.post("/tasks", (req, res) => {
     });
 });
 
+app.delete("/tasks/:id",(req,res) =>{
+    const taskId= Number(req.params.id);
+    const taskIndex= tasks.findIndex((task) => task.id === taskId);
+    if (taskIndex === -1) {
+        return res.json({message:"Task Not Found!"});
+    }
+
+    const deletedTask= tasks.splice(taskIndex,1);
+    res.json(
+        {message:"Task deleted succesfully",
+            task:deletedTask[0]
+        }
+    );
+});
+
 app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
