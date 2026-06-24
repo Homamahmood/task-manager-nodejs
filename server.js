@@ -24,15 +24,22 @@ app.get("/tasks", (req, res) => {
 });
 
 app.post("/tasks", (req, res) => {
+    const title = req.body.title;
+
+    if (!title || title.trim() === "") {
+        return res.status(400).json({
+            message: "Task title is required"
+        });
+    }
 
     const newTask = {
         id: tasks.length + 1,
-        title: req.body.title
+        title: title.trim()
     };
 
     tasks.push(newTask);
 
-    res.json({
+    res.status(201).json({
         message: "Task added successfully",
         task: newTask
     });
@@ -64,7 +71,15 @@ app.put("/tasks/:id", (req, res) => {
         });
     }
 
-    task.title = req.body.title;
+    const title = req.body.title;
+
+if (!title || title.trim() === "") {
+    return res.status(400).json({
+        message: "Task title is required"
+    });
+}
+
+task.title = title.trim();
 
     res.json({
         message: "Task updated successfully",
