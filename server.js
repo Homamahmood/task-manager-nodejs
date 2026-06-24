@@ -49,8 +49,10 @@ app.delete("/tasks/:id",(req,res) =>{
     const taskId= Number(req.params.id);
     const taskIndex= tasks.findIndex((task) => task.id === taskId);
     if (taskIndex === -1) {
-        return res.json({message:"Task Not Found!"});
-    }
+    return res.status(404).json({
+        message: "Task not found"
+    });
+}
 
     const deletedTask= tasks.splice(taskIndex,1);
     res.json(
@@ -66,12 +68,12 @@ app.put("/tasks/:id", (req, res) => {
     const task = tasks.find((task) => task.id === taskId);
 
     if (!task) {
-        return res.json({
-            message: "Task not found"
-        });
-    }
+    return res.status(404).json({
+        message: "Task not found"
+    });
+}
 
-    const title = req.body.title;
+const title = req.body.title;
 
 if (!title || title.trim() === "") {
     return res.status(400).json({
