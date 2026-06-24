@@ -7,11 +7,13 @@ app.use(express.json());
 const tasks = [
     {
         id: 1,
-        title: "Learn Node.js"
+        title: "Learn Node.js",
+        completed: false
     },
     {
         id: 2,
-        title: "Practice Git"
+        title: "Practice Git",
+        completed: false
     }
 ];
 
@@ -32,10 +34,11 @@ app.post("/tasks", (req, res) => {
         });
     }
 
-    const newTask = {
-        id: tasks.length + 1,
-        title: title.trim()
-    };
+   const newTask = {
+    id: tasks.length + 1,
+    title: title.trim(),
+    completed: false
+};
 
     tasks.push(newTask);
 
@@ -85,6 +88,25 @@ task.title = title.trim();
 
     res.json({
         message: "Task updated successfully",
+        task: task
+    });
+});
+
+app.patch("/tasks/:id/complete", (req, res) => {
+    const taskId = Number(req.params.id);
+
+    const task = tasks.find((task) => task.id === taskId);
+
+    if (!task) {
+        return res.status(404).json({
+            message: "Task not found"
+        });
+    }
+
+    task.completed = !task.completed;
+
+    res.json({
+        message: "Task completion status updated",
         task: task
     });
 });
