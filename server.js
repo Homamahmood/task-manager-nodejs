@@ -5,19 +5,6 @@ const app = express();
 
 app.use(express.json());
 
-const tasks = [
-    {
-        id: 1,
-        title: "Learn Node.js",
-        completed: false
-    },
-    {
-        id: 2,
-        title: "Practice Git",
-        completed: false
-    }
-];
-
 app.get("/", (req, res) => {
     res.send("Task Manager API Running...");
 });
