@@ -1,4 +1,5 @@
 const express = require("express");
+const connection = require("./db");
 
 const app = express();
 
@@ -22,7 +23,17 @@ app.get("/", (req, res) => {
 });
 
 app.get("/tasks", (req, res) => {
-    res.json(tasks);
+    const sql = "SELECT * FROM tasks";
+
+    connection.query(sql, (error, results) => {
+        if (error) {
+            return res.status(500).json({
+                message: "Failed to get tasks"
+            });
+        }
+
+        res.json(results);
+    });
 });
 
 app.get("/tasks/:id", (req, res) => {
@@ -48,21 +59,25 @@ app.post("/tasks", (req, res) => {
         });
     }
 
-const nextId = tasks.length === 0
-    ? 1
-    : Math.max(...tasks.map((task) => task.id)) + 1;
+    const sql = "INSERT INTO tasks (title, completed) VALUES (?, ?)";
 
-const newTask = {
-    id: nextId,
-    title: title.trim(),
-    completed: false
-};
+    connection.query(sql, [title.trim(), false], (error, results) => {
+        if (error) {
+            return res.status(500).json({
+                message: "Failed to add task"
+            });
+        }
 
-    tasks.push(newTask);
+        const newTask = {
+            id: results.insertId,
+            title: title.trim(),
+            completed: false
+        };
 
-    res.status(201).json({
-        message: "Task added successfully",
-        task: newTask
+        res.status(201).json({
+            message: "Task added successfully",
+            task: newTask
+        });
     });
 });
 
