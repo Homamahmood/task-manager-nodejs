@@ -39,17 +39,24 @@ app.get("/tasks", (req, res) => {
 app.get("/tasks/:id", (req, res) => {
     const taskId = Number(req.params.id);
 
-    const task = tasks.find((task) => task.id === taskId);
+    const sql = "SELECT * FROM tasks WHERE id = ?";
 
-    if (!task) {
-        return res.status(404).json({
-            message: "Task not found"
-        });
-    }
+    connection.query(sql, [taskId], (error, results) => {
+        if (error) {
+            return res.status(500).json({
+                message: "Failed to get task"
+            });
+        }
 
-    res.json(task);
+        if (results.length === 0) {
+            return res.status(404).json({
+                message: "Task not found"
+            });
+        }
+
+        res.json(results[0]);
+    });
 });
-
 app.post("/tasks", (req, res) => {
     const title = req.body.title;
 
@@ -81,66 +88,108 @@ app.post("/tasks", (req, res) => {
     });
 });
 
-app.delete("/tasks/:id",(req,res) =>{
-    const taskId= Number(req.params.id);
-    const taskIndex= tasks.findIndex((task) => task.id === taskId);
-    if (taskIndex === -1) {
-    return res.status(404).json({
-        message: "Task not found"
-    });
-}
+app.delete("/tasks/:id", (req, res) => {
+    const taskId = Number(req.params.id);
 
-    const deletedTask= tasks.splice(taskIndex,1);
-    res.json(
-        {message:"Task deleted succesfully",
-            task:deletedTask[0]
+    const sql = "DELETE FROM tasks WHERE id = ?";
+
+    connection.query(sql, [taskId], (error, results) => {
+        if (error) {
+            return res.status(500).json({
+                message: "Failed to delete task"
+            });
         }
-    );
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Task not found"
+            });
+        }
+
+        res.json({
+            message: "Task deleted successfully"
+        });
+    });
 });
 
 app.put("/tasks/:id", (req, res) => {
     const taskId = Number(req.params.id);
+    const title = req.body.title;
 
-    const task = tasks.find((task) => task.id === taskId);
+    if (!title || title.trim() === "") {
+        return res.status(400).json({
+            message: "Task title is required"
+        });
+    }
 
-    if (!task) {
-    return res.status(404).json({
-        message: "Task not found"
-    });
-}
+    const sql = "UPDATE tasks SET title = ? WHERE id = ?";
 
-const title = req.body.title;
+    connection.query(sql, [title.trim(), taskId], (error, results) => {
+        if (error) {
+            return res.status(500).json({
+                message: "Failed to update task"
+            });
+        }
 
-if (!title || title.trim() === "") {
-    return res.status(400).json({
-        message: "Task title is required"
-    });
-}
+        if (results.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Task not found"
+            });
+        }
 
-task.title = title.trim();
-
-    res.json({
-        message: "Task updated successfully",
-        task: task
+        res.json({
+            message: "Task updated successfully",
+            task: {
+                id: taskId,
+                title: title.trim()
+            }
+        });
     });
 });
 
 app.patch("/tasks/:id/complete", (req, res) => {
     const taskId = Number(req.params.id);
 
-    const task = tasks.find((task) => task.id === taskId);
+    const findSql = "SELECT * FROM tasks WHERE id = ?";
 
-    if (!task) {
-        return res.status(404).json({
-            message: "Task not found"
-        });
-    }
+    connection.query(findSql, [taskId], (error, results) => {
+        if (error) {
+            return res.status(500).json({
+                message: "Failed to find task"
+            });
+        }
 
-    task.completed = !task.completed;
+        if (results.length === 0) {
+            return res.status(404).json({
+                message: "Task not found"
+            });
+        }
 
-    res.json({
-        message: "Task completion status updated",
-        task: task
+        const task = results[0];
+        const newCompletedStatus = !task.completed;
+
+        const updateSql = "UPDATE tasks SET completed = ? WHERE id = ?";
+
+        connection.query(
+            updateSql,
+            [newCompletedStatus, taskId],
+            (updateError) => {
+                if (updateError) {
+                    return res.status(500).json({
+                        message: "Failed to update task completion status"
+                    });
+                }
+
+                res.json({
+                    message: "Task completion status updated",
+                    task: {
+                        id: task.id,
+                        title: task.title,
+                        completed: newCompletedStatus
+                    }
+                });
+            }
+        );
     });
 });
 
