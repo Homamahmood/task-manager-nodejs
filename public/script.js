@@ -26,14 +26,20 @@ async function loadTasks() {
                 </div>
 
                 <div class="task-buttons">
-                    <button class="complete-btn" data-id="${task.id}">
-                        ${task.completed ? "Undo" : "Complete"}
-                    </button>
 
-                    <button class="edit-btn" data-id="${task.id}">
-                        Edit
-                    </button>
-                </div>
+    <button class="complete-btn" data-id="${task.id}">
+        ${task.completed ? "Undo" : "Complete"}
+    </button>
+
+    <button class="edit-btn" data-id="${task.id}">
+        Edit
+    </button>
+
+    <button class="delete-btn" data-id="${task.id}">
+        Delete
+    </button>
+
+</div>
             `;
 
             taskList.appendChild(taskItem);
@@ -77,7 +83,29 @@ async function loadTasks() {
 
                 loadTasks();
 
+                
+
             });
+            // Delete Button
+const deleteButton = taskItem.querySelector(".delete-btn");
+
+deleteButton.addEventListener("click", async () => {
+
+    const taskId = deleteButton.dataset.id;
+
+    const confirmDelete = confirm("Are you sure you want to delete this task?");
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    await fetch(`/tasks/${taskId}`, {
+        method: "DELETE"
+    });
+
+    loadTasks();
+
+});
 
         });
 
@@ -86,6 +114,9 @@ async function loadTasks() {
         console.log(error);
     }
 }
+
+
+
 
 // Add Task
 taskForm.addEventListener("submit", async (event) => {
@@ -129,5 +160,7 @@ taskForm.addEventListener("submit", async (event) => {
     }
 
 });
+
+
 
 loadTasks();

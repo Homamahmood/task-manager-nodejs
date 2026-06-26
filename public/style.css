@@ -111,3 +111,11 @@ button:hover {
 .edit-btn:hover{
     background:#d97706;
 }
+
+.delete-btn{
+    background:#ef4444;
+}
+
+.delete-btn:hover{
+    background:#dc2626;
+}
