@@ -1,11 +1,13 @@
 const taskList = document.getElementById("task-list");
 const taskForm = document.getElementById("task-form");
 const taskInput = document.getElementById("task-input");
+const taskCount = document.getElementById("task-count");
 
 async function loadTasks() {
     try {
         const response = await fetch("/tasks");
         const tasks = await response.json();
+        taskCount.textContent = `${tasks.length} Task${tasks.length !== 1 ? "s" : ""}`;
 
         taskList.innerHTML = "";
 
@@ -22,7 +24,9 @@ async function loadTasks() {
             taskItem.innerHTML = `
                 <div class="task-info">
                     <strong>${task.title}</strong>
-                    <p>${task.completed ? "Completed ✅" : "Pending ⏳"}</p>
+                    <p class="${task.completed ? "completed" : "pending"}">
+    ${task.completed ? "Completed" : "Pending"}
+</p>
                 </div>
 
                 <div class="task-buttons">
