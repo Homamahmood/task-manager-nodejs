@@ -98,3 +98,16 @@ button:hover {
 .complete-btn:hover{
     background:#16a34a;
 }
+
+.task-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.edit-btn{
+    background:#f59e0b;
+}
+
+.edit-btn:hover{
+    background:#d97706;
+}
