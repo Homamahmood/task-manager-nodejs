@@ -20,11 +20,30 @@ async function loadTasks() {
             taskItem.classList.add("task-item");
 
             taskItem.innerHTML = `
-                <span>${task.title}</span>
-                <span>${task.completed ? "Completed" : "Pending"}</span>
-            `;
+    <div class="task-info">
+        <strong>${task.title}</strong>
+        <p>${task.completed ? "Completed ✅" : "Pending ⏳"}</p>
+    </div>
+
+    <button class="complete-btn" data-id="${task.id}">
+        Complete
+    </button>
+`;
 
             taskList.appendChild(taskItem);
+            const completeButton = taskItem.querySelector(".complete-btn");
+
+completeButton.addEventListener("click", async () => {
+
+    const taskId = completeButton.dataset.id;
+
+    await fetch(`/tasks/${taskId}/complete`, {
+        method: "PATCH"
+    });
+
+    loadTasks();
+
+});
         });
     } catch (error) {
         taskList.innerHTML = "<p>Could not load tasks.</p>";

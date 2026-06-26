@@ -84,3 +84,17 @@ button:hover {
     font-size: 14px;
     color: #6b7280;
 }
+
+.task-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.complete-btn{
+    background:#22c55e;
+}
+
+.complete-btn:hover{
+    background:#16a34a;
+}
