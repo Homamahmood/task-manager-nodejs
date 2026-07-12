@@ -133,11 +133,11 @@ http://localhost:3000
 
 ### Task Added
 
-(Add screenshot here)
+![Task Added](task_added.png)
 
 ### Completed Task
 
-(Add screenshot here)
+![Completed Task](completed.png)
 
 ---
 
