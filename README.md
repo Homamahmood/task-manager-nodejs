@@ -129,7 +129,7 @@ http://localhost:3000
 
 ### Home Page
 
-(Add screenshot here)
+![Home Page](home.png)
 
 ### Task Added
 
